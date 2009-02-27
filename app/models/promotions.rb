@@ -8,4 +8,19 @@ class Promotions < ActiveRecord::Base
     promos.map {|p| p.product }
   end 
 
+  def self.best_sellers(n)
+    # most ordered items
+    # looks for completed orders from past week, then gets top N sellers by quantity
+    # query: need to filter out cancelled orders? 
+    best_n = Order.checkout_completed(true).
+                   between(1.week.ago,Time.now).
+                   find(:all, 
+                        :joins => "INNER JOIN line_items ON orders.id = line_items.order_id", 
+                        :select => "variant_id, SUM (quantity) sum", 
+                        :group => "variant_id ORDER BY sum DESC",
+                        :limit => n)
+
+    best_n.map {|o| [o.sum, Variant.find(o.variant_id).product] }
+  end 
+
 end
