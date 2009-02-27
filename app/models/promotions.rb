@@ -17,7 +17,7 @@ class Promotions < ActiveRecord::Base
                    between(start,finish).
                    find(:all, 
                         :joins => "INNER JOIN line_items ON orders.id = line_items.order_id", 
-                        :select => "variant_id, SUM (quantity) sum", 
+                        :select => "variant_id, SUM(quantity) sum", 
                         :group => "variant_id ORDER BY sum DESC",
                         :limit => n)
 
