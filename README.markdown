@@ -11,6 +11,12 @@ console etc (no nice admin interface yet)
 
 call Promotions.random_subset(n) to get n products
 
+call Promotions.best_sellers(n, start = 1.week.ago, finish = Time.now) to get 
+the n best sellers in the selected time period (default: the past week)
+
+
+
+
 
 implementation etc
 ------------------
