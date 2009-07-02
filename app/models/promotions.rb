@@ -16,12 +16,13 @@ class Promotions < ActiveRecord::Base
     best_n = Order.checkout_completed(true).
                    between(start,finish).
                    find(:all, 
-                        :joins => "INNER JOIN line_items ON orders.id = line_items.order_id", 
-                        :select => "variant_id, SUM(quantity) sum", 
-                        :group => "variant_id ORDER BY sum DESC",
+                        :joins => "INNER JOIN line_items ON orders.id = line_items.order_id" +
+                                  " INNER JOIN variants ON variant_id = variants.id",
+                        :select => "product_id, SUM(quantity) sum",
+                        :group => "product_id ORDER BY sum DESC",
                         :limit => n)
 
-    best_n.map {|o| [o.sum, Variant.find(o.variant_id).product] }
+    best_n.map {|o| [o.sum, Product.find(o.product_id)] }
   end 
 
 end
