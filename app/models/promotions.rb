@@ -13,10 +13,12 @@ class Promotions < ActiveRecord::Base
     # looks for completed orders from date range (default: the past week)
     # then gets top N sellers by quantity
     # query: need to filter out cancelled orders? 
-    best_n = Order.checkout_completed(true).
-                   between(start,finish).
+    #
+    # Jul09: had problem with :select vs :include in checkout_complete, hence the DIY
+    best_n = Order.between(start,finish).
                    find(:all, 
-                        :joins => "INNER JOIN line_items ON orders.id = line_items.order_id" +
+                        :joins => "INNER JOIN checkouts ON orders.id = checkouts.order_id AND checkouts.completed_at IS NOT NULL" +
+                                  " INNER JOIN line_items ON orders.id = line_items.order_id" +
                                   " INNER JOIN variants ON variant_id = variants.id",
                         :select => "product_id, SUM(quantity) sum",
                         :group => "product_id ORDER BY sum DESC",
